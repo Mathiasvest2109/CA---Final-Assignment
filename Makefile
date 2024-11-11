@@ -3,7 +3,7 @@ CCWARNINGS = -W -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-fun
 CCOPTS = -g -O0
 CCFLAGS = $(CCWARNINGS) $(CCOPTS)
 
-SOURCES = main.c
+SOURCES = main.c instructions.c
 OBJECTS = $(SOURCES:.c=.o)
 
 EXE = RISC-V.exe
@@ -12,7 +12,7 @@ OUTPUT_DIR = output
 
 all: | $(OUTPUT_DIR)
 	make $(OBJECTS)
-	$(CC) $(CCFLAGS) $(OUTPUT_DIR)/$(OBJECTS) -o $(OUTPUT_DIR)/$(EXE)
+	$(CC) $(CCFLAGS) $(OUTPUT_DIR)/*.o -o $(OUTPUT_DIR)/$(EXE)
 
 $(OUTPUT_DIR):
 	mkdir $(OUTPUT_DIR)

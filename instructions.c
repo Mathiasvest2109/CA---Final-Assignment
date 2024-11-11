@@ -3,7 +3,7 @@
 #include "instructions.h"
 
 Instruction decode(int instructionValue) {
-    int opcode = instructionValue & OPCODE_MASK;
+    int opcode = GET_OPCODE(instructionValue);
     Instruction decoded;
 
     switch (opcode) {
@@ -45,10 +45,10 @@ Instruction decode(int instructionValue) {
     }
 
     // Just mask out all the common parts. Some may not be used, but it's better to keep the code DRY
-    int rd = instructionValue & RD_MASK;
-    int rs1 = instructionValue & RS1_MASK;
-    int rs2 = instructionValue & RS2_MASK;
-    int funct3 = instructionValue & FUNCT3_MASK;
+    int rd = GET_RD(instructionValue);
+    int rs1 = GET_RS1(instructionValue);
+    int rs2 = GET_RS2(instructionValue);
+    int funct3 = GET_FUNCT3(instructionValue);
 
     int immediate;
     switch (decoded.type)
@@ -62,7 +62,7 @@ Instruction decode(int instructionValue) {
 
             // Set the "opcode", based on funct3, and possibly funct7
             if (opcode == 0b0110011) {
-                int funct7 = (instructionValue & (0b1111111 << 25)) >> 25;
+                int funct7 = GET_FUNCT7(instructionValue);
                 switch (funct3) {
                     case 0b000:
                         switch (funct7) {
@@ -114,35 +114,35 @@ Instruction decode(int instructionValue) {
             InstructionI* immediateInstruction = malloc(sizeof(InstructionI));
             immediateInstruction->rd = rd;
             immediateInstruction->rs1 = rs1;
-            immediateInstruction->immediate = instructionValue & (0xFFF << 20);
+            immediateInstruction->immediate = (instructionValue & (0xFFF << 20)) >> 20;
             immediateInstruction->opcode = Unknown;
 
             if (opcode == 0b0010011) {
                 switch (funct3) {
                     case 0b000:
-                        registerInstruction->opcode = ADDI;
+                        immediateInstruction->opcode = ADDI;
                         break;
                     case 0b010:
-                        registerInstruction->opcode = SLTI;
+                        immediateInstruction->opcode = SLTI;
                         break;
                     case 0b011:
-                        registerInstruction->opcode = SLTIU;
+                        immediateInstruction->opcode = SLTIU;
                         break;
                     case 0b111:
-                        registerInstruction->opcode = ANDI;
+                        immediateInstruction->opcode = ANDI;
                         break;
                     case 0b110:
-                        registerInstruction->opcode = ORI;
+                        immediateInstruction->opcode = ORI;
                         break;
                     case 0b100:
-                        registerInstruction->opcode = XORI;
+                        immediateInstruction->opcode = XORI;
                         break;
                     case 0b001:
-                        registerInstruction->opcode = SLLI;
+                        immediateInstruction->opcode = SLLI;
                         break;
                     case 0b101:
-                        int funct7 = (instructionValue & (0b1111111 << 25)) >> 25;
-                        registerInstruction->opcode = (funct7 == 0b0000000) ? SRLI : SRAI;
+                        int funct7 = GET_FUNCT7(instructionValue);
+                        immediateInstruction->opcode = (funct7 == 0b0000000) ? SRLI : SRAI;
                         break;
                     default:
                         // huh
@@ -150,7 +150,7 @@ Instruction decode(int instructionValue) {
                 }
             }
             else if (opcode == 0b1100111) {
-                registerInstruction->opcode = JALR;
+                immediateInstruction->opcode = JALR;
             }
             else if (opcode == 0b0000011) {
                 // TODO
@@ -158,23 +158,22 @@ Instruction decode(int instructionValue) {
             if (opcode == 0b0100011) {
                 switch (funct3) {
                     case 0b010:
-                        registerInstruction->opcode = LW;
+                        immediateInstruction->opcode = LW;
                         break;
                     case 0b001:
-                        registerInstruction->opcode = LH;
+                        immediateInstruction->opcode = LH;
                         break;
                     case 0b101:
-                        registerInstruction->opcode = LHU;
+                        immediateInstruction->opcode = LHU;
                         break;
                     case 0b000:
-                        registerInstruction->opcode = LB;
+                        immediateInstruction->opcode = LB;
                         break;
                     case 0b100:
-                        registerInstruction->opcode = LBU;
+                        immediateInstruction->opcode = LBU;
                         break;
                 }
             }
-            // Set the "opcode" as well
 
             decoded.data = immediateInstruction;
             break;
@@ -243,16 +242,16 @@ Instruction decode(int instructionValue) {
             upperInstruction->opcode = (opcode == 0b0110111) ? LUI : AUIPC;
             break;
         case J:
-            InstructionJ* upperInstruction = malloc(sizeof(InstructionJ));
-            upperInstruction->rd = rd;
+            InstructionJ* jumpInstruction = malloc(sizeof(InstructionJ));
+            jumpInstruction->rd = rd;
             // It's the only J-type instruction (in this part of RISC-V at least)
-            upperInstruction->opcode = JAL;
+            jumpInstruction->opcode = JAL;
 
             immediate  = (instructionValue & (0b111111111 << 21)) >> (21 - 1);
             immediate |= (instructionValue & (0b1 << 20)) >> (20 - 11);
             immediate |= (instructionValue & (0b1111111 << 12)); // >> (12 - 12);
             immediate |= (instructionValue & (0b1 << 31)) >> (31 - 20);
-            upperInstruction->immediate = immediate;
+            jumpInstruction->immediate = immediate;
             break;
     }
 

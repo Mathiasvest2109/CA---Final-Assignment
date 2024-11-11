@@ -108,11 +108,12 @@ typedef struct Instruction {
 // helper
 #define REGISTER_MASK (0b11111)
 
-#define OPCODE_MASK (0b111111)
-#define RD_MASK (REGISTER_MASK << 5)
-#define RS1_MASK (REGISTER_MASK << 15)
-#define RS2_MASK (REGISTER_MASK << 20)
-#define FUNCT3_MASK (0b111 << 12)
+#define GET_OPCODE(instruction) (instruction & 0b111111)
+#define GET_RD(instruction)  ((instruction & (REGISTER_MASK << 7)) >> 7)
+#define GET_RS1(instruction) ((instruction & (REGISTER_MASK << 15)) >> 15)
+#define GET_RS2(instruction) ((instruction & (REGISTER_MASK << 20)) >> 20)
+#define GET_FUNCT3(instruction) ((instruction & (0b111 << 12)) >> 12)
+#define GET_FUNCT7(instruction) ((instruction & (0b1111111 << 25)) >> 25)
 
 Instruction decode(int instructionValue);
 
