@@ -6,12 +6,12 @@ int main(int argc, char** args)
    // printf("Hello world");
 
    // addi x3, x0, 69
-   Instruction instr = decode(0x4500193);
+   InstructionData instructionData = decode(0x4500193);
 
-   printf("Type: %d\n", instr.type);
-   InstructionI* add = instr.data;
+   printf("Type: %d\n", instructionData.type);
+   InstructionI* instruction = instructionData.data;
 
-   printf("Opcode: %d\nx%d <- x%d + %d\n", add->opcode, add->rd, add->rs1, add->immediate);
+   printf("Opcode: %d\nx%d <- x%d + %d\n", instruction->opcode, instruction->rd, instruction->rs1, instruction->immediate);
 
    return 0;
 }

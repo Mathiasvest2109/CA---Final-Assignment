@@ -100,12 +100,12 @@ typedef struct InstructionUnknown {
     int instruction;
 } InstructionUnknown;
 
-typedef struct Instruction {
+typedef struct InstructionData {
     InstructionType type;
     void* data;
-} Instruction;
+} InstructionData;
 
 
-Instruction decode(int instructionValue);
+InstructionData decode(int instructionValue);
 
 #endif

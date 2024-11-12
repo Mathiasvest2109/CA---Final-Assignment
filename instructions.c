@@ -16,9 +16,9 @@
 #define GET_U_IMMEDIATE(instruction) (instruction & 0xFFFFF000)
 #define GET_J_IMMEDIATE(instruction) ((instruction & (0b1111111111 << 21)) >> 20) | ((instruction & (0b1 << 20)) >> 9) | (instruction & (0b11111111 << 12)) | ((instruction & (0b1 << 31)) >> 11)
 
-Instruction decode(int instructionValue) {
+InstructionData decode(int instructionValue) {
     int opcode = GET_OPCODE(instructionValue);
-    Instruction decoded;
+    InstructionData decoded;
 
     switch (opcode) {
         case 0b0110011: // add, or, and, etc.
@@ -212,12 +212,14 @@ Instruction decode(int instructionValue) {
             // Set the "opcode" as well
 
             saveInstruction->immediate = GET_S_IMMEDIATE(instructionValue);
+
+            decoded.data = saveInstruction;
             break;
         case B:
             InstructionB* branchInstruction = malloc(sizeof(InstructionB));
-            saveInstruction->rs1 = rs1;
-            saveInstruction->rs2 = rs2;
-            saveInstruction->opcode = Unknown;
+            branchInstruction->rs1 = rs1;
+            branchInstruction->rs2 = rs2;
+            branchInstruction->opcode = Unknown;
             switch (funct3) {
                 case 0b000:
                     branchInstruction->opcode = BEQ;
@@ -238,7 +240,9 @@ Instruction decode(int instructionValue) {
                     branchInstruction->opcode = BGEU;
             }
 
-            saveInstruction->immediate = GET_B_IMMEDIATE(instructionValue);
+            branchInstruction->immediate = GET_B_IMMEDIATE(instructionValue);
+            
+            decoded.data = branchInstruction;
             break;
         case U:
             InstructionU* upperInstruction = malloc(sizeof(InstructionU));
@@ -246,6 +250,8 @@ Instruction decode(int instructionValue) {
             upperInstruction->immediate = GET_U_IMMEDIATE(instructionValue);
             // The only 2 U-type instructions (in this part of RISC-V at least)
             upperInstruction->opcode = (opcode == 0b0110111) ? LUI : AUIPC;
+            
+            decoded.data = upperInstruction;
             break;
         case J:
             InstructionJ* jumpInstruction = malloc(sizeof(InstructionJ));
@@ -254,6 +260,8 @@ Instruction decode(int instructionValue) {
             jumpInstruction->opcode = JAL;
 
             jumpInstruction->immediate = GET_J_IMMEDIATE(instructionValue);
+            
+            decoded.data = jumpInstruction;
             break;
     }
 
