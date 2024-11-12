@@ -2,6 +2,20 @@
 #include <stdio.h>
 #include "instructions.h"
 
+// Bit manipulations to extract relevant info from the instruction-number
+#define GET_OPCODE(instruction) (instruction & 0b111111)
+#define GET_RD(instruction)  ((instruction & (0b11111 << 7)) >> 7)
+#define GET_RS1(instruction) ((instruction & (0b11111 << 15)) >> 15)
+#define GET_RS2(instruction) ((instruction & (0b11111 << 20)) >> 20)
+#define GET_FUNCT3(instruction) ((instruction & (0b111 << 12)) >> 12)
+#define GET_FUNCT7(instruction) ((instruction & (0b1111111 << 25)) >> 25)
+
+#define GET_I_IMMEDIATE(instruction) ((instruction & (0b111111111111 << 20)) >> 20)
+#define GET_S_IMMEDIATE(instruction) (((instruction & (0b11111 << 7)) >> 7) | ((instruction & (0b1111111 << 25)) >> 20))
+#define GET_B_IMMEDIATE(instruction) (((instruction & (0b1111 << 8)) >> 7) | ((instruction & (0b111111 << 25)) >> 20) | ((instruction & (0b1 << 7)) << 4) | ((instruction & (0b1 << 31)) >> 19))
+#define GET_U_IMMEDIATE(instruction) (instruction & 0xFFFFF000)
+#define GET_J_IMMEDIATE(instruction) ((instruction & (0b1111111111 << 21)) >> 20) | ((instruction & (0b1 << 20)) >> 9) | (instruction & (0b11111111 << 12)) | ((instruction & (0b1 << 31)) >> 11)
+
 Instruction decode(int instructionValue) {
     int opcode = GET_OPCODE(instructionValue);
     Instruction decoded;
@@ -50,7 +64,6 @@ Instruction decode(int instructionValue) {
     int rs2 = GET_RS2(instructionValue);
     int funct3 = GET_FUNCT3(instructionValue);
 
-    int immediate;
     switch (decoded.type)
     {
         case R:
@@ -114,7 +127,7 @@ Instruction decode(int instructionValue) {
             InstructionI* immediateInstruction = malloc(sizeof(InstructionI));
             immediateInstruction->rd = rd;
             immediateInstruction->rs1 = rs1;
-            immediateInstruction->immediate = (instructionValue & (0xFFF << 20)) >> 20;
+            immediateInstruction->immediate = GET_I_IMMEDIATE(instructionValue);
             immediateInstruction->opcode = Unknown;
 
             if (opcode == 0b0010011) {
@@ -198,9 +211,7 @@ Instruction decode(int instructionValue) {
             }
             // Set the "opcode" as well
 
-            immediate  = (instructionValue & (0xF << 7)) >> 7;
-            immediate |= (instructionValue & (0b111111 << 25)) >> (25 - 7);
-            saveInstruction->immediate = immediate;
+            saveInstruction->immediate = GET_S_IMMEDIATE(instructionValue);
             break;
         case B:
             InstructionB* branchInstruction = malloc(sizeof(InstructionB));
@@ -226,18 +237,13 @@ Instruction decode(int instructionValue) {
                 case 0b111:
                     branchInstruction->opcode = BGEU;
             }
-            // Set the "opcode" as well
 
-            immediate  = (instructionValue & (0b111 << 7)) >> (7 - 1);
-            immediate |= (instructionValue & (0b11111 << 24)) >> (24 - 5);
-            immediate |= (instructionValue & (0b1 << 6)) << (11 - 6);
-            immediate |= (instructionValue & (0b1 << 31)) >> (31 - 12);
-            saveInstruction->immediate = immediate;
+            saveInstruction->immediate = GET_B_IMMEDIATE(instructionValue);
             break;
         case U:
             InstructionU* upperInstruction = malloc(sizeof(InstructionU));
             upperInstruction->rd = rd;
-            upperInstruction->immediate = instructionValue & (~0xFFF);
+            upperInstruction->immediate = GET_U_IMMEDIATE(instructionValue);
             // The only 2 U-type instructions (in this part of RISC-V at least)
             upperInstruction->opcode = (opcode == 0b0110111) ? LUI : AUIPC;
             break;
@@ -247,11 +253,7 @@ Instruction decode(int instructionValue) {
             // It's the only J-type instruction (in this part of RISC-V at least)
             jumpInstruction->opcode = JAL;
 
-            immediate  = (instructionValue & (0b111111111 << 21)) >> (21 - 1);
-            immediate |= (instructionValue & (0b1 << 20)) >> (20 - 11);
-            immediate |= (instructionValue & (0b1111111 << 12)); // >> (12 - 12);
-            immediate |= (instructionValue & (0b1 << 31)) >> (31 - 20);
-            jumpInstruction->immediate = immediate;
+            jumpInstruction->immediate = GET_J_IMMEDIATE(instructionValue);
             break;
     }
 
