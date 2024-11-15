@@ -11,8 +11,9 @@ ifeq ($(OS),Windows_NT)
 EXE := $(EXE).exe
 endif
 
-
 OUTPUT_DIR = output
+
+.PHONY: all clean run
 
 all: | $(OUTPUT_DIR) $(OBJECTS)
 	$(CC) $(CCFLAGS) $(OBJECTS:%=$(OUTPUT_DIR)/%) -o $(OUTPUT_DIR)/$(EXE)
