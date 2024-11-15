@@ -263,6 +263,10 @@ InstructionData decode(int instructionValue) {
             decoded.data = instruction;
             break;
         }
+        default: {
+            // TODO
+            exit(1);
+        }
     }
 
     return decoded;
