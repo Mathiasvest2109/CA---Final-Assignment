@@ -16,6 +16,10 @@ void set_program_counter(Program program, int programCounter) {
     fseek(program, programCounter, SEEK_SET);
 }
 
+int get_program_counter(Program program) {
+    return ftell(program);
+}
+
 void unload_program(Program program) {
     fclose(program);
 }
