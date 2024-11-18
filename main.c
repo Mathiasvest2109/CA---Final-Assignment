@@ -7,7 +7,7 @@
 int main(int argc, char** args)
 {
    // printf("Hello world");
-   Program p = load_program("addlarge.bin");
+   Program* p = load_program("addlarge.bin");
 
    print_lui(decode(next_instruction(p)).data);
    print_addi(decode(next_instruction(p)).data);
@@ -30,23 +30,23 @@ int main(int argc, char** args)
    printf("---------------------\n");
 
    p = load_program("addlarge.bin");
-   printf("[pc = %d] ", get_program_counter(p));
+   printf("[pc = %d] ", p->pc);
    print_lui(decode(next_instruction(p)).data);
-   printf("[pc = %d] ", get_program_counter(p));
+   printf("[pc = %d] ", p->pc);
    print_addi(decode(next_instruction(p)).data);
-   printf("[pc = %d] ", get_program_counter(p));
+   printf("[pc = %d] ", p->pc);
    print_lui(decode(next_instruction(p)).data);
    
    printf("--- RESET ---\n");
-   set_program_counter(p, 0);
+   p->pc = 0;
 
-   printf("[pc = %d] ", get_program_counter(p));
+   printf("[pc = %d] ", p->pc);
    print_lui(decode(next_instruction(p)).data);
-   printf("[pc = %d] ", get_program_counter(p));
+   printf("[pc = %d] ", p->pc);
    print_addi(decode(next_instruction(p)).data);
-   printf("[pc = %d] ", get_program_counter(p));
+   printf("[pc = %d] ", p->pc);
    print_lui(decode(next_instruction(p)).data);
-   printf("[pc = %d] ", get_program_counter(p));
+   printf("[pc = %d] ", p->pc);
    print_addi(decode(next_instruction(p)).data);
    
    unload_program(p);

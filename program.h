@@ -1,13 +1,15 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-// opaque type
-typedef void* Program;
+#include <stdio.h>
 
-Program load_program(char* path);
-int next_instruction(Program program);
-void set_program_counter(Program program, int programCounter);
-int get_program_counter(Program program);
-void unload_program(Program program);
+typedef struct Program {
+    FILE* stream;
+    int pc;
+} Program;
+
+Program* load_program(char* path);
+int next_instruction(Program* program);
+void unload_program(Program* program);
 
 #endif
