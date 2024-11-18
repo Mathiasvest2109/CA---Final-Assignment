@@ -3,16 +3,20 @@ CCWARNINGS = -W -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-fun
 CCOPTS = -g -O0
 CCFLAGS = $(CCWARNINGS) $(CCOPTS)
 
-SOURCES = main.c
+SOURCES = main.c decoder.c registers.c
 OBJECTS = $(SOURCES:.c=.o)
 
-EXE = RISC-V.exe
+EXE = RISC-V
+ifeq ($(OS),Windows_NT)
+EXE := $(EXE).exe
+endif
 
 OUTPUT_DIR = output
 
-all: | $(OUTPUT_DIR)
-	make $(OBJECTS)
-	$(CC) $(CCFLAGS) $(OUTPUT_DIR)/$(OBJECTS) -o $(OUTPUT_DIR)/$(EXE)
+.PHONY: all clean run
+
+all: | $(OUTPUT_DIR) $(OBJECTS)
+	$(CC) $(CCFLAGS) $(OBJECTS:%=$(OUTPUT_DIR)/%) -o $(OUTPUT_DIR)/$(EXE)
 
 $(OUTPUT_DIR):
 	mkdir $(OUTPUT_DIR)
@@ -22,7 +26,14 @@ $(OUTPUT_DIR):
 
 clean:
 ifneq ($(OS),Windows_NT)
-	if [ -d $(OUTPUT_DIR) ]; then rm -rf $(OUTPUT_DIR); fi
+	rm -rf $(OUTPUT_DIR)
 else
 	if exist $(OUTPUT_DIR) rd /s /q $(OUTPUT_DIR)
+endif
+
+run: | all
+ifneq ($(OS),Windows_NT)
+	./$(OUTPUT_DIR)/$(EXE)
+else
+	$(OUTPUT_DIR)/$(EXE)
 endif
