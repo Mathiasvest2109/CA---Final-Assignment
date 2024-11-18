@@ -16,52 +16,52 @@ void execute_instruction(InstructionData* instructionData) {
             switch (instr->opcode) {
                 case ADD: {
                     int result = get_register(instr->rs1) + get_register(instr->rs2);
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SUB: {
                     int result = get_register(instr->rs1) - get_register(instr->rs2);
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SLT: {
                     int result = get_register(instr->rs1) < get_register(instr->rs2) ? 1 : 0; // condition ? value_if_true : value_if_false
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SLTU: {
                     unsigned int result = (unsigned int)get_register(instr->rs1) < (unsigned int)get_register(instr->rs2) ? 1 : 0; 
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case AND: {
                     int result = get_register(instr->rs1) & get_register(instr->rs2);
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case OR: {
                     int result = get_register(instr->rs1) | get_register(instr->rs2);
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case XOR: {
                     int result = get_register(instr->rs1) ^ get_register(instr->rs2);
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SLL: { 
                     int result = get_register(instr->rs1) << get_register(instr->rs2);
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SRL: {
                     int result = get_register(instr->rs1) >> get_register(instr->rs2);
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SRA: {
                     int result = get_register(instr->rs1) >> get_register(instr->rs2);
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 default:
@@ -78,47 +78,47 @@ void execute_instruction(InstructionData* instructionData) {
             switch (instr->opcode) {
                 case ADDI: {
                     int result = get_register(instr->rs1) + instr->immediate;
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SLTI: {
                     int result = get_register(instr->rs1) < instr->immediate ? 1 : 0;
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SLTIU: {
                     unsigned int result = (unsigned int)get_register(instr->rs1) < (unsigned int)instr->immediate ? 1 : 0;
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case ANDI: {
                     int result = get_register(instr->rs1) & instr->immediate;
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case ORI: {
                     int result = get_register(instr->rs1) | instr->immediate;
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case XORI: {
                     int result = get_register(instr->rs1) ^ instr->immediate;
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SLLI: {
                     int result = get_register(instr->rs1) << instr->immediate;
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SRLI: {
                     int result = get_register(instr->rs1) >> instr->immediate;
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case SRAI: {
                     int result = get_register(instr->rs1) >> instr->immediate;
-                    set_register(instr->rd) = result;
+                    set_register(instr->rd, result);
                     break;
                 }
                 case JALR: {
