@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "instructions.h"
+#include "decoder.h"
 
 int main(int argc, char** args)
 {

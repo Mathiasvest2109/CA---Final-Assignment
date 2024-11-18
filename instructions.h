@@ -105,7 +105,4 @@ typedef struct InstructionData {
     void* data;
 } InstructionData;
 
-
-InstructionData decode(int instructionValue);
-
 #endif
