@@ -9,7 +9,7 @@ Program* load_program(char* path) {
     return p;
 }
 
-int next_instruction(Program* program) {
+int fetch_instruction(Program* program) {
     int instruction;
 
     // Set the stream to the same position as the program counter (as it could've been updated)

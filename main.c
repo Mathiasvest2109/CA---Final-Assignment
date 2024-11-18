@@ -9,14 +9,14 @@ int main(int argc, char** args)
    // printf("Hello world");
    Program* p = load_program("addlarge.bin");
 
-   print_lui(decode(next_instruction(p)).data);
-   print_addi(decode(next_instruction(p)).data);
-   print_lui(decode(next_instruction(p)).data);
-   print_addi(decode(next_instruction(p)).data);
-   print_add(decode(next_instruction(p)).data);
-   print_addi(decode(next_instruction(p)).data);
+   print_lui(decode(fetch_instruction(p)).data);
+   print_addi(decode(fetch_instruction(p)).data);
+   print_lui(decode(fetch_instruction(p)).data);
+   print_addi(decode(fetch_instruction(p)).data);
+   print_add(decode(fetch_instruction(p)).data);
+   print_addi(decode(fetch_instruction(p)).data);
 
-   InstructionData i = decode(next_instruction(p));
+   InstructionData i = decode(fetch_instruction(p));
    if (i.type == Unknown && ((InstructionUnknown*)i.data)->opcode == ECALL) {
       printf("ecall\n");
       printf("[SUCCESS]\n");
@@ -31,23 +31,23 @@ int main(int argc, char** args)
 
    p = load_program("addlarge.bin");
    printf("[pc = %d] ", p->pc);
-   print_lui(decode(next_instruction(p)).data);
+   print_lui(decode(fetch_instruction(p)).data);
    printf("[pc = %d] ", p->pc);
-   print_addi(decode(next_instruction(p)).data);
+   print_addi(decode(fetch_instruction(p)).data);
    printf("[pc = %d] ", p->pc);
-   print_lui(decode(next_instruction(p)).data);
+   print_lui(decode(fetch_instruction(p)).data);
    
    printf("--- RESET ---\n");
    p->pc = 0;
 
    printf("[pc = %d] ", p->pc);
-   print_lui(decode(next_instruction(p)).data);
+   print_lui(decode(fetch_instruction(p)).data);
    printf("[pc = %d] ", p->pc);
-   print_addi(decode(next_instruction(p)).data);
+   print_addi(decode(fetch_instruction(p)).data);
    printf("[pc = %d] ", p->pc);
-   print_lui(decode(next_instruction(p)).data);
+   print_lui(decode(fetch_instruction(p)).data);
    printf("[pc = %d] ", p->pc);
-   print_addi(decode(next_instruction(p)).data);
+   print_addi(decode(fetch_instruction(p)).data);
    
    unload_program(p);
    return 0;
