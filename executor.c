@@ -223,7 +223,7 @@ void execute_instruction(InstructionData* instructionData) {
             // U-type instructions (e.g., LUI, AUIPC)
             switch (instr->opcode) {
                 case LUI: {
-                    set_register(instr->rd) = instr->immediate << 12; // load upper immediate into the destination register
+                    set_register(instr->rd, instr->immediate << 12); // load upper immediate into the destination register
                     break;
                 }
                 case AUIPC: {
