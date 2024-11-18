@@ -46,8 +46,8 @@ typedef enum Opcode {
 } Opcode;
 
 typedef enum InstructionType {
-    Unknown = -1,
-    R = 0,
+    Unknown,
+    R,
     I,
     S,
     B,
