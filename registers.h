@@ -3,5 +3,6 @@
 
 int get_register(int index);
 void set_register(int index, int value);
+void dump_registers(void);
 
 #endif

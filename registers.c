@@ -13,3 +13,9 @@ void set_register(int index, int value) {
 
     registers[index - 1] = value;
 }
+
+void dump_registers(void) {
+    for (int i = 0; i < 32; i++) {
+        printf("0x%08x (x%d)\n", get_register(i), i);
+    }
+}
