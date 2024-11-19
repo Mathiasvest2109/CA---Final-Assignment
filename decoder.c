@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 // Bit manipulations to extract relevant info from the instruction-number
-#define GET_OPCODE(instruction) (instruction & 0b111111)
+#define GET_OPCODE(instruction) (instruction & 0b1111111)
 #define GET_RD(instruction)  ((instruction & (0b11111 << 7)) >> 7)
 #define GET_RS1(instruction) ((instruction & (0b11111 << 15)) >> 15)
 #define GET_RS2(instruction) ((instruction & (0b11111 << 20)) >> 20)

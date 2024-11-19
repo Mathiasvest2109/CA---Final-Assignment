@@ -1,19 +1,67 @@
 #include <stdio.h>
 #include "decoder.h"
 #include "memory.h"
+#include "program.h"
+
+#define GET_OPCODE(instruction) (instruction & 0b111111)
 
 int main(int argc, char** args)
 {
-   store_byte(0, 0xF0);
-   store_half(1, 0xF0);
-   store_word(3, 0xF0);
+   // printf("Hello world");
+   Program* p = load_program("addlarge.bin");
 
-   printf("Word: %u\n", load_word(3));
-   printf("Half: %u\n", load_half(1));
-   printf("Byte: %u\n", (uint8_t)load_byte(0));
+   print_lui(decode(fetch_instruction(p)).data);
+   print_addi(decode(fetch_instruction(p)).data);
+   print_lui(decode(fetch_instruction(p)).data);
+   print_addi(decode(fetch_instruction(p)).data);
+   print_add(decode(fetch_instruction(p)).data);
+   print_addi(decode(fetch_instruction(p)).data);
 
-   printf("Mangled: %u (0x%08X)\n", load_word(0), load_word(0));
-   dump_memory();
+   InstructionData i = decode(fetch_instruction(p));
+   if (i.type == Unknown && ((InstructionUnknown*)i.data)->opcode == ECALL) {
+      printf("ecall\n");
+      printf("[SUCCESS]\n");
+   }
+   else {
+      printf("not ecall\n");
+      printf("[FAILURE]");
+   }
 
+   unload_program(p);
+   printf("---------------------\n");
+
+   p = load_program("addlarge.bin");
+   printf("[pc = %d] ", p->pc);
+   print_lui(decode(fetch_instruction(p)).data);
+   printf("[pc = %d] ", p->pc);
+   print_addi(decode(fetch_instruction(p)).data);
+   printf("[pc = %d] ", p->pc);
+   print_lui(decode(fetch_instruction(p)).data);
+   
+   printf("--- RESET ---\n");
+   p->pc = 0;
+
+   printf("[pc = %d] ", p->pc);
+   print_lui(decode(fetch_instruction(p)).data);
+   printf("[pc = %d] ", p->pc);
+   print_addi(decode(fetch_instruction(p)).data);
+   printf("[pc = %d] ", p->pc);
+   print_lui(decode(fetch_instruction(p)).data);
+   printf("[pc = %d] ", p->pc);
+   print_addi(decode(fetch_instruction(p)).data);
+   
+   unload_program(p);
    return 0;
+}
+
+void print_lui(InstructionU* instruction) {
+   printf("lui x%d, 0x%x\n", instruction->rd, instruction->immediate);
+}
+
+void print_addi(InstructionI* instruction) {
+   printf("addi x%d, x%d, %d\n", instruction->rd, instruction->rs1, instruction->immediate);
+}
+
+void print_add(InstructionR* instruction) {
+   printf("add x%d, x%d, x%d\n", instruction->rd, instruction->rs1, instruction->rs2);
 }
