@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "decoder.h"
+#include "memory.h"
 #include "program.h"
 
 #define GET_OPCODE(instruction) (instruction & 0b111111)

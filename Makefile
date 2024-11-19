@@ -3,7 +3,7 @@ CCWARNINGS = -W -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-fun
 CCOPTS = -g -O0
 CCFLAGS = $(CCWARNINGS) $(CCOPTS)
 
-SOURCES = main.c decoder.c registers.c program.c
+SOURCES = main.c decoder.c registers.c program.c memory.c
 OBJECTS = $(SOURCES:.c=.o)
 
 EXE = RISC-V
