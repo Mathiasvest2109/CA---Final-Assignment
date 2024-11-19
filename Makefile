@@ -3,7 +3,7 @@ CCWARNINGS = -W -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-fun
 CCOPTS = -g -O0
 CCFLAGS = $(CCWARNINGS) $(CCOPTS)
 
-SOURCES = main.c decoder.c registers.c program.c memory.c
+SOURCES = main.c decoder.c registers.c program.c memory.c executor.c
 OBJECTS = $(SOURCES:.c=.o)
 
 EXE = RISC-V
@@ -33,7 +33,7 @@ endif
 
 run: | all
 ifneq ($(OS),Windows_NT)
-	./$(OUTPUT_DIR)/$(EXE)
+	./$(OUTPUT_DIR)/$(EXE) $(PROGRAM)
 else
 	$(OUTPUT_DIR)/$(EXE)
 endif

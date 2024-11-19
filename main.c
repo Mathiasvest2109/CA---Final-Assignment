@@ -2,66 +2,32 @@
 #include "decoder.h"
 #include "memory.h"
 #include "program.h"
-
-#define GET_OPCODE(instruction) (instruction & 0b111111)
+#include "executor.h"
 
 int main(int argc, char** args)
 {
-   // printf("Hello world");
-   Program* p = load_program("addlarge.bin");
-
-   print_lui(decode(fetch_instruction(p)).data);
-   print_addi(decode(fetch_instruction(p)).data);
-   print_lui(decode(fetch_instruction(p)).data);
-   print_addi(decode(fetch_instruction(p)).data);
-   print_add(decode(fetch_instruction(p)).data);
-   print_addi(decode(fetch_instruction(p)).data);
-
-   InstructionData i = decode(fetch_instruction(p));
-   if (i.type == Unknown && ((InstructionUnknown*)i.data)->opcode == ECALL) {
-      printf("ecall\n");
-      printf("[SUCCESS]\n");
+   if (argc == 1) {
+      printf("No program given\n");
+      return 1;
    }
-   else {
-      printf("not ecall\n");
-      printf("[FAILURE]");
+   else if (argc > 2) {
+      printf("Too many programs given\n");
+      return 2;
    }
 
-   unload_program(p);
-   printf("---------------------\n");
+   Program* p = load_program(args[1]);
 
-   p = load_program("addlarge.bin");
-   printf("[pc = %d] ", p->pc);
-   print_lui(decode(fetch_instruction(p)).data);
-   printf("[pc = %d] ", p->pc);
-   print_addi(decode(fetch_instruction(p)).data);
-   printf("[pc = %d] ", p->pc);
-   print_lui(decode(fetch_instruction(p)).data);
-   
-   printf("--- RESET ---\n");
-   p->pc = 0;
+   while (has_instruction(p)) {
+      InstructionData instructionData = decode(fetch_instruction(p));
 
-   printf("[pc = %d] ", p->pc);
-   print_lui(decode(fetch_instruction(p)).data);
-   printf("[pc = %d] ", p->pc);
-   print_addi(decode(fetch_instruction(p)).data);
-   printf("[pc = %d] ", p->pc);
-   print_lui(decode(fetch_instruction(p)).data);
-   printf("[pc = %d] ", p->pc);
-   print_addi(decode(fetch_instruction(p)).data);
-   
+      if (instructionData.type == Unknown) // ecall
+         break;
+      
+      execute_instruction(&instructionData);
+   }
+
+   dump_registers();
    unload_program(p);
+
    return 0;
-}
-
-void print_lui(InstructionU* instruction) {
-   printf("lui x%d, 0x%x\n", instruction->rd, instruction->immediate);
-}
-
-void print_addi(InstructionI* instruction) {
-   printf("addi x%d, x%d, %d\n", instruction->rd, instruction->rs1, instruction->immediate);
-}
-
-void print_add(InstructionR* instruction) {
-   printf("add x%d, x%d, x%d\n", instruction->rd, instruction->rs1, instruction->rs2);
 }
