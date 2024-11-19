@@ -1,4 +1,5 @@
 #include "registers.h"
+#include <stdio.h>
 
 int registers[31];
 

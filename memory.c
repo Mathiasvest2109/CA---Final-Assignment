@@ -1,4 +1,5 @@
 #include "memory.h"
+#include <stdio.h>
 #include <string.h>
 
 // dubious macros
