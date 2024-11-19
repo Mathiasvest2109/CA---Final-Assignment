@@ -3,10 +3,20 @@
 #include <stdio.h>
 
 Program* load_program(char* path) {
-    Program* p = malloc(sizeof(Program));
-    p->stream = fopen(path, "rb");
-    p->pc = 0;
-    return p;
+    Program* program = malloc(sizeof(Program));
+    program->stream = fopen(path, "rb");
+    // TODO: error handling?
+    program->pc = 0;
+
+    // Find the end of the file, and save where that is, so we know the size of the program
+    fseek(program->stream, 0, SEEK_END);
+    program->size = ftell(program->stream);
+    fseek(program->stream, 0, SEEK_SET);
+    return program;
+}
+
+bool has_instruction(Program* program) {
+    return program->pc < program->size;
 }
 
 int fetch_instruction(Program* program) {
