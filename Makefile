@@ -6,9 +6,15 @@ CCFLAGS = $(CCWARNINGS) $(CCOPTS)
 SOURCES = main.c decoder.c registers.c program.c memory.c executor.c
 OBJECTS = $(SOURCES:.c=.o)
 
+TEST_SOURCES = testing.c decoder.c registers.c program.c memory.c executor.c
+TEST_OBJECTS = $(TEST_SOURCES:.c=.o)
+
 EXE = RISC-V
+TEST_EXE = test
+
 ifeq ($(OS),Windows_NT)
 EXE := $(EXE).exe
+TEST_EXE := $(TEST_EXE).exe
 endif
 
 OUTPUT_DIR = output
@@ -36,4 +42,12 @@ ifneq ($(OS),Windows_NT)
 	./$(OUTPUT_DIR)/$(EXE) $(PROGRAM)
 else
 	$(OUTPUT_DIR)/$(EXE)
+endif
+
+test: | $(TEST_OBJECTS)
+	$(CC) $(CCFLAGS) $(TEST_OBJECTS:%=$(OUTPUT_DIR)/%) -o $(OUTPUT_DIR)/$(TEST_EXE)
+ifneq ($(OS),Windows_NT)
+	./$(OUTPUT_DIR)/$(TEST_EXE)
+else
+	$(OUTPUT_DIR)/$(TEST_EXE)
 endif
