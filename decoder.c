@@ -13,9 +13,9 @@
 // Get the immediate values for different instruction types
 #define GET_I_IMMEDIATE(instruction) ((instruction & (0b111111111111 << 20)) >> 20)
 #define GET_S_IMMEDIATE(instruction) (((instruction & (0b11111 << 7)) >> 7) | ((instruction & (0b1111111 << 25)) >> 20))
-#define GET_B_IMMEDIATE(instruction) (((instruction & (0b1111 << 8)) >> 7) | ((instruction & (0b111111 << 25)) >> 20) | ((instruction & (0b1 << 7)) << 4) | ((instruction & (0b1 << 31)) >> 19))
-#define GET_U_IMMEDIATE(instruction) (instruction & 0xFFFFF000)
-#define GET_J_IMMEDIATE(instruction) ((instruction & (0b1111111111 << 21)) >> 20) | ((instruction & (0b1 << 20)) >> 9) | (instruction & (0b11111111 << 12)) | ((instruction & (0b1 << 31)) >> 11)
+#define GET_B_IMMEDIATE(instruction) ((((instruction & (0b1111 << 8)) >> 7) | ((instruction & (0b111111 << 25)) >> 20) | ((instruction & (0b1 << 7)) << 4) | ((instruction & (0b1 << 31)) >> 19)) >> 1)
+#define GET_U_IMMEDIATE(instruction) ((instruction & 0xFFFFF000) >> 12)
+#define GET_J_IMMEDIATE(instruction) ((((instruction & (0b1111111111 << 21)) >> 20) | ((instruction & (0b1 << 20)) >> 9) | (instruction & (0b11111111 << 12)) | ((instruction & (0b1 << 31)) >> 11)) >> 1)
 
 
 InstructionData decode(int instructionValue) {
