@@ -55,9 +55,12 @@ void execute_instruction(InstructionData* instructionData) {
                     break;
                 }
                 case SRL: {
-                    int result = get_register(instr->rs1) >> get_register(instr->rs2);
+
+                    unsigned int shift_amoumt = get_register(instr->rs2) & 0x1F;  // get lower 5 bits of rs2
+                    unsigned int result = (unsigned int)get_register(instr->rs1) >> shift_amoumt; //logical right shifts on the value in register rs1
                     set_register(instr->rd, result);
                     break;
+                    
                 }
                 case SRA: {
                     int result = get_register(instr->rs1) >> get_register(instr->rs2);
@@ -112,7 +115,8 @@ void execute_instruction(InstructionData* instructionData) {
                     break;
                 }
                 case SRLI: {
-                    int result = get_register(instr->rs1) >> instr->immediate;
+                    unsigned int shift_amount = instr->immediate & 0x1F; // immediate shift amount
+                    unsigned int result = (unsigned int)get_register(instr->rs1) >> shift_amount; // logical right shift
                     set_register(instr->rd, result);
                     break;
                 }
