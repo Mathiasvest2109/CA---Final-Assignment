@@ -1,7 +1,8 @@
 #include "executor.h"
+#include <stdlib.h>
 #include <stdio.h>
 
-void execute_instruction(InstructionData* instructionData) {
+void execute_instruction(InstructionData* instructionData, Program* program) {
     // if no instructionData
     if (instructionData == NULL || instructionData->data == NULL) {
         return;
@@ -77,7 +78,7 @@ void execute_instruction(InstructionData* instructionData) {
         case I: {
             InstructionI* instr = (InstructionI*)instructionData->data;
 
-            // I-type instructions (e.g., ADDI, SLTI, etc.)
+            // I-type instructions
             switch (instr->opcode) {
                 case ADDI: {
                     int result = get_register(instr->rs1) + instr->immediate;
@@ -126,10 +127,8 @@ void execute_instruction(InstructionData* instructionData) {
                     break;
                 }
                 case JALR: {
-                    // int target = PC + 4;
-                    // goto rs1 + imm12
-                    // set_register(instr->rd) = target; 
-                    // will continue when Task 2 gets Implemented
+                    set_register(instr->rd, program->pc);              // save return address in rd, SKAL DEN VOKSE MED 4 ELLER IKKE?
+                    program->pc = (get_register(instr->rs1) + instr->immediate) & ~1; // go to target address, and ensure even number
                     break;
                 }
                 case LW: {
@@ -147,7 +146,7 @@ void execute_instruction(InstructionData* instructionData) {
         case S: {
             InstructionI* instr = (InstructionI*)instructionData->data;
 
-            // S-type instructions (e.g., ADDI, SLTI, etc.)
+            // S-type instructions 
             switch (instr->opcode) {
                 case SW: {
                     // Awaiting Task 3 implementation
@@ -164,19 +163,20 @@ void execute_instruction(InstructionData* instructionData) {
         case B: {
             InstructionB* instr = (InstructionB*)instructionData->data;
 
-            // B-type instructions (e.g., BEQ, BNE, etc.)
+            // B-type instructions
             switch (instr->opcode) {
                 case BEQ: {
                     if (get_register(instr->rs1) == get_register(instr->rs2)) {
+                        program->pc = program->pc - 4 + (instr->immediate << 1);
                         // PC += instr->immediate << 1;
                     } else {
-                        // PC += 4;
+                        // PC is already increamented by 4
                     }
                     break;
                 }
                 case BNE: {
                     if (get_register(instr->rs1) != get_register(instr->rs2)) {
-                        // PC += instr->immediate << 1;
+                        program->pc = program->pc - 4 + (instr->immediate << 1);
                     } else {
                         // PC += 4;
                     }
@@ -184,7 +184,7 @@ void execute_instruction(InstructionData* instructionData) {
                 }
                 case BLT: {
                     if (get_register(instr->rs1) < get_register(instr->rs2)) {
-                        // PC += instr->immediate << 1;
+                        program->pc = program->pc - 4 + (instr->immediate << 1);
                     } else {
                         // PC += 4;
                     }
@@ -192,7 +192,7 @@ void execute_instruction(InstructionData* instructionData) {
                 }
                 case BGE: {
                     if (get_register(instr->rs1) >= get_register(instr->rs2)) {
-                        // PC += instr->immediate << 1;
+                        program->pc = program->pc - 4 + (instr->immediate << 1);
                     } else {
                         // PC += 4;
                     }
@@ -200,7 +200,7 @@ void execute_instruction(InstructionData* instructionData) {
                 }
                 case BLTU: {
                     if ((unsigned int)get_register(instr->rs1) < (unsigned int)get_register(instr->rs2)) {
-                        // PC += instr->immediate << 1;
+                        program->pc = program->pc - 4 + (instr->immediate << 1);
                     } else {
                         // PC += 4;
                     }
@@ -208,7 +208,7 @@ void execute_instruction(InstructionData* instructionData) {
                 }
                 case BGEU: {
                     if ((unsigned int)get_register(instr->rs1) >= (unsigned int)get_register(instr->rs2)) {
-                        // PC += instr->immediate << 1;
+                        program->pc = program->pc - 4 + (instr->immediate << 1);
                     } else {
                         // PC += 4;
                     }
@@ -224,14 +224,15 @@ void execute_instruction(InstructionData* instructionData) {
         case U: {
             InstructionU* instr = (InstructionU*)instructionData->data;
 
-            // U-type instructions (e.g., LUI, AUIPC)
+            // U-type instructions 
             switch (instr->opcode) {
                 case LUI: {
                     set_register(instr->rd, instr->immediate << 12); // load upper immediate into the destination register
                     break;
                 }
                 case AUIPC: {
-                    // set_register(instr->rd) = PC + (instr->immediate << 12); // add upper immediate to PC and store the result in rd
+                    int target = program->pc - 4 + (instr->immediate << 12); // add upper immediate to PC and store the result in rd
+                    set_register(instr->rd, target); // Compute address relative to PC
                     break;
                 }
                 default:
@@ -249,6 +250,8 @@ void execute_instruction(InstructionData* instructionData) {
                 case JAL: {
                     // rd = pc + 4
                     // goto pc + (imm20 << 1)
+                    set_register(instr->rd, program->pc);                        // Save return address
+                    program->pc = program->pc - 4 + (instr->immediate << 1);    // Jump to target
                     break;
                 }
                 default:

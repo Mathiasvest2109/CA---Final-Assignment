@@ -3,8 +3,9 @@
 
 #include "instructions.h"
 #include "registers.h"
+#include "program.h"
 
-// Function to execute a decoded instruction
-void execute_instruction(InstructionData* instructionData);
+// function to execute a decoded instruction
+void execute_instruction(InstructionData* instructionData, Program* program);
 
 #endif
