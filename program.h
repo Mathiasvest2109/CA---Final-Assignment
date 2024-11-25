@@ -5,7 +5,6 @@
 #include <stdbool.h>
 
 typedef struct Program {
-    FILE* stream;
     int pc;
     int size;
 } Program;
