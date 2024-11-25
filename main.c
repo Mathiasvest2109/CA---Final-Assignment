@@ -19,10 +19,6 @@ int main(int argc, char** args)
 
    while (has_instruction(p)) {
       InstructionData instructionData = decode(fetch_instruction(p));
-
-      if (instructionData.type == Unknown) // ecall
-         break;
-      
       execute_instruction(&instructionData, p);
    }
 

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "memory.h"
+#include <limits.h>
 
 int alu(int arg1, int arg2, Opcode instruction);
 
@@ -164,6 +165,59 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
             }
             break;
         }
+
+        case Unknown:
+
+            int arg = get_register(10);
+            switch (get_register(17))
+            {
+            case 1:
+                printf("%d\n",arg);
+                break;
+            
+            case 2:
+                printf("%f\n", (float)arg);
+                break;
+
+            case 4:
+                printf("Address: %p\n", get_c_address(arg));
+                printf("%s\n", (char*)get_c_address(arg));
+                break;
+
+            case 10:
+                program->pc = -1;
+                break;
+
+            case 11:
+                printf("%c\n",arg);
+                break;
+
+            case 34:
+                printf("%x\n",arg);
+                break;
+
+            case 35:
+                unsigned int mask = 1 << (sizeof(int) * CHAR_BIT - 1); // Start with the leftmost bit
+
+                while (mask) {
+                    printf("%d", (arg & mask) ? 1 : 0); // Check if the corresponding bit is set
+                    mask >>= 1; // Shift mask to the right
+                }
+
+                printf("\n");
+                break;
+
+            case 36:
+                printf("%u",arg);
+                break;
+
+            case 93: //missing logic
+                program->pc = -1;
+                break;
+
+            default:
+                break;
+            }
 
         default:
             break;

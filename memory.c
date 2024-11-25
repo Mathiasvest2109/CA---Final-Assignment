@@ -46,3 +46,9 @@ void dump_memory(void) {
     }
     printf("\n");
 }
+
+
+void* get_c_address(int RISC_address){
+    printf("Memory is at '%p'-'%p'\n", memory, memory + 1 MiB - 1);
+    return &memory[RISC_address];
+}

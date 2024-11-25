@@ -13,4 +13,6 @@ void store_byte(int address, int8_t value);
 
 void dump_memory(void);
 
+void* get_c_address(int RISC_address);
+
 #endif

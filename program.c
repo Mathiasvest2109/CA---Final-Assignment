@@ -26,7 +26,7 @@ Program* load_program(char* path) {
 }
 
 bool has_instruction(Program* program) {
-    return program->pc < program->size;
+    return program->pc < program->size && program->pc != -1;
 }
 
 int fetch_instruction(Program* program) {
