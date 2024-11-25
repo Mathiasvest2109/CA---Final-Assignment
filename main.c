@@ -23,7 +23,7 @@ int main(int argc, char** args)
       if (instructionData.type == Unknown) // ecall
          break;
       
-      execute_instruction(&instructionData);
+      execute_instruction(&instructionData, p);
    }
 
    dump_registers();
