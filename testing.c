@@ -11,6 +11,8 @@ void run_binary(char* path);
 void task1(void);
 void task2(void);
 void task3(void);
+void task4(void);
+void custom(void);
 
 int compare_registers(int expected[], const char* testName) {
     int allGood = 1;
@@ -265,9 +267,31 @@ void task3(void) {
     printf("[Passed %d/%d Tests]\n", successTests, totalTests);
 }
 
+void custom(void) {
+    printf("=== Starting Task 3 Tests ===\n");
+    int totalTests = 0;
+    int successTests = 0;
+    int expected[32];
+
+    memset(expected, 0, 32 * sizeof(int));
+    run_binary("tests/custom/endianness.bin");
+    expected[2] = 0x3;
+    expected[5] = 0x01020304;
+    expected[6] = 0x1;
+    expected[7] = 0x2;
+    expected[17] = 0xa;
+    expected[28] = 0x3;
+    expected[29] = 0x4;
+    totalTests++;
+    successTests += compare_registers(expected, "endianness");
+
+    printf("[Passed %d/%d Tests]\n", successTests, totalTests);
+}
+
 int main(void) {
     task1();
     task2();
     task3();
+    custom();
     printf("=== Done with all tests ===\n");
 }
