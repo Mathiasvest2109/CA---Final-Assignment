@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "memory.h"
 
 int alu(int arg1, int arg2, Opcode instruction);
 
@@ -31,7 +32,28 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
                     break;
                 case LW:
                     // Waiting for Task 3 to be implemented
-                    // Also need, LH, LHU, LB, LBU
+                    int word = load_word(get_register(instr->rs1) + instr->immediate);
+                    set_register(instr->rd, word);
+                    break;
+                case LH:
+
+                    int half_word = load_half(get_register(instr->rs1) + instr->immediate);
+                    set_register(instr->rd, half_word);
+                    break;
+                case LHU:
+
+                    int unsigned_half_word = (unsigned int)load_half(get_register(instr->rs1) + instr->immediate);//unsigned
+                    set_register(instr->rd, unsigned_half_word); 
+                    break;
+                case LB:
+
+                    int byte = load_byte(get_register(instr->rs1) + instr->immediate);
+                    set_register(instr->rd, byte);
+                    break;
+                case LBU:
+
+                    int unisgned_byte = (unsigned int)load_byte(get_register(instr->rs1) + instr->immediate);
+                    set_register(instr->rd, unisgned_byte);
                     break;
                 default:
                     int result = alu(get_register(instr->rs1), instr->immediate, instr->opcode);
@@ -42,15 +64,22 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
         }
 
         case S: {
-            InstructionI* instr = (InstructionI*)instructionData->data;
+            InstructionS* instr = (InstructionS*)instructionData->data;
 
             // S-type instructions 
             switch (instr->opcode) {
                 case SW: {
-                    // Awaiting Task 3 implementation
-                    // Also need SH, SB
+                    store_word(get_register(instr->rs1) + instr->immediate, get_register(instr->rs2));
                     break;
                 }
+                case SH:
+                    store_half(get_register(instr->rs1) + instr->immediate, get_register(instr->rs2) & 0xffff); //bit masking to get 16 bits
+                    break;
+
+                case SB:
+                    store_byte(get_register(instr->rs1) + instr->immediate, get_register(instr->rs2) & 0xff); //bit masking to get 8 bits
+                    break;
+
                 default:
                     //idk girl
                     break;
