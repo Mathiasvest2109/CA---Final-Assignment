@@ -44,7 +44,7 @@ else
 	$(OUTPUT_DIR)/$(EXE)
 endif
 
-test: | $(TEST_OBJECTS)
+test: | $(OUTPUT_DIR) $(TEST_OBJECTS)
 	$(CC) $(CCFLAGS) $(TEST_OBJECTS:%=$(OUTPUT_DIR)/%) -o $(OUTPUT_DIR)/$(TEST_EXE)
 ifneq ($(OS),Windows_NT)
 	./$(OUTPUT_DIR)/$(TEST_EXE)
