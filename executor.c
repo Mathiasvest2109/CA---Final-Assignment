@@ -42,8 +42,8 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
                     break;
                 case LHU:
 
-                    int unsigned_half_word = (unsigned int)load_half(get_register(instr->rs1) + instr->immediate);//unsigned
-                    set_register(instr->rd, unsigned_half_word); 
+                    int unsigned_half_word = load_half(get_register(instr->rs1) + instr->immediate);//unsigned
+                    set_register(instr->rd, unsigned_half_word & 0xffff); 
                     break;
                 case LB:
 
@@ -52,8 +52,8 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
                     break;
                 case LBU:
 
-                    int unisgned_byte = (unsigned int)load_byte(get_register(instr->rs1) + instr->immediate);
-                    set_register(instr->rd, unisgned_byte);
+                    int unsigned_byte = load_byte(get_register(instr->rs1) + instr->immediate);
+                    set_register(instr->rd, unsigned_byte & 0xff);
                     break;
                 default:
                     int result = alu(get_register(instr->rs1), instr->immediate, instr->opcode);
