@@ -42,13 +42,16 @@ void reset_registers(void) {
 
 void run_binary(char* path) {
     Program *p = load_program(path);
-    while (has_instruction(p)) {
+
+    int steps = 0;
+    while (has_instruction(p) && steps < 100000) {
         InstructionData instructionData = decode(fetch_instruction(p));
 
         if (instructionData.type == Unknown) // ecall
             break;
       
-        execute_instruction(&instructionData);
+        execute_instruction(&instructionData, p);
+        steps++;
     }
     unload_program(p);
 }
