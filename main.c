@@ -23,7 +23,6 @@ int main(int argc, char** args)
       if (instructionData.type == Unknown) // ecall
          break;
       
-      printf("Executing instruction '%d' (%d)\n", ((InstructionI*)instructionData.data)->opcode, instructionData.type);
       execute_instruction(&instructionData, p);
    }
 
