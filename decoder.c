@@ -161,9 +161,6 @@ InstructionData decode(int instructionValue) {
                 instruction->opcode = JALR;
             }
             else if (opcode == 0b0000011) {
-                // TODO
-            }
-            if (opcode == 0b0100011) {
                 switch (GET_FUNCT3(instructionValue)) {
                     case 0b010:
                         instruction->opcode = LW;
