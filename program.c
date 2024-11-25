@@ -1,16 +1,25 @@
 #include "program.h"
+#include "memory.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 Program* load_program(char* path) {
     Program* program = malloc(sizeof(Program));
-    program->stream = fopen(path, "rb");
     // TODO: error handling?
+    program->stream = fopen(path, "rb");
     program->pc = 0;
 
     // Find the end of the file, and save where that is, so we know the size of the program
     fseek(program->stream, 0, SEEK_END);
     program->size = ftell(program->stream);
+    fseek(program->stream, 0, SEEK_SET);
+
+    for (int i = 0; i < program->size; i += 4) {
+        int n;
+        fread(&n, 4, 1, program->stream);
+        store_word(i, n);
+    }
+
     fseek(program->stream, 0, SEEK_SET);
     return program;
 }
