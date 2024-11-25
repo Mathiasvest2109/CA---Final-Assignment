@@ -1,6 +1,7 @@
 #include "executor.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 void execute_instruction(InstructionData* instructionData, Program* program) {
     // if no instructionData
@@ -163,61 +164,44 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
         case B: {
             InstructionB* instr = (InstructionB*)instructionData->data;
 
+            bool shouldBranch;
             // B-type instructions
             switch (instr->opcode) {
                 case BEQ: {
-                    if (get_register(instr->rs1) == get_register(instr->rs2)) {
-                        program->pc = program->pc - 4 + (instr->immediate << 1);
-                        // PC += instr->immediate << 1;
-                    } else {
-                        // PC is already increamented by 4
-                    }
+                    shouldBranch = (get_register(instr->rs1) == get_register(instr->rs2));
                     break;
                 }
                 case BNE: {
-                    if (get_register(instr->rs1) != get_register(instr->rs2)) {
-                        program->pc = program->pc - 4 + (instr->immediate << 1);
-                    } else {
-                        // PC += 4;
-                    }
+                    shouldBranch = (get_register(instr->rs1) != get_register(instr->rs2));
                     break;
                 }
                 case BLT: {
-                    if (get_register(instr->rs1) < get_register(instr->rs2)) {
-                        program->pc = program->pc - 4 + (instr->immediate << 1);
-                    } else {
-                        // PC += 4;
-                    }
+                    shouldBranch = (get_register(instr->rs1) < get_register(instr->rs2));
                     break;
                 }
                 case BGE: {
-                    if (get_register(instr->rs1) >= get_register(instr->rs2)) {
-                        program->pc = program->pc - 4 + (instr->immediate << 1);
-                    } else {
-                        // PC += 4;
-                    }
+                    shouldBranch = (get_register(instr->rs1) >= get_register(instr->rs2));
                     break;
                 }
                 case BLTU: {
-                    if ((unsigned int)get_register(instr->rs1) < (unsigned int)get_register(instr->rs2)) {
-                        program->pc = program->pc - 4 + (instr->immediate << 1);
-                    } else {
-                        // PC += 4;
-                    }
+                    shouldBranch = ((unsigned int)get_register(instr->rs1) < (unsigned int)get_register(instr->rs2));
                     break;
                 }
                 case BGEU: {
-                    if ((unsigned int)get_register(instr->rs1) >= (unsigned int)get_register(instr->rs2)) {
-                        program->pc = program->pc - 4 + (instr->immediate << 1);
-                    } else {
-                        // PC += 4;
-                    }
+                    shouldBranch = ((unsigned int)get_register(instr->rs1) >= (unsigned int)get_register(instr->rs2));
                     break;
                 }
                 default:
+                    shouldBranch = false;
                     // idk girl
                     break;
             }
+            
+            // pc has already been incremented, so the branch target is off by 4, and the noBranch is just the pc itself
+            int branchTarget = program->pc - 4 + (instr->immediate << 1);
+            int noBranchTarget = program->pc;
+
+            program->pc = (shouldBranch) ? (branchTarget) : (noBranchTarget);
             break;
         }
 
