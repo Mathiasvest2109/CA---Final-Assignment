@@ -193,6 +193,8 @@ void task3(void) {
 
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task3/loop.bin");
+    expected[1] = 0x8;
+    expected[2] = 0x00100000;
     expected[6] = 0x64;
     expected[10] = 0x1356;
     expected[11] = 0x64;
@@ -208,7 +210,6 @@ void task3(void) {
     run_binary("tests/task3/recursive.bin");
     expected[1] = 0x8;
     expected[2] = 0x100000;
-    expected[3] = 0x10000000;
     expected[10] = 0x65;
     expected[15] = 0x65;
     expected[17] = 0xa;
