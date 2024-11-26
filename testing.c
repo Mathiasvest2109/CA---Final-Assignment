@@ -8,11 +8,11 @@
 int compare_registers(int expected[], const char* testName);
 void reset_registers(void);
 void run_binary(char* path);
-void task1(void);
-void task2(void);
-void task3(void);
-void task4(void);
-void custom(void);
+void task1(int* total, int* passed);
+void task2(int* total, int* passed);
+void task3(int* total, int* passed);
+void task4(int* total, int* passed);
+void custom(int* total, int* passed);
 
 int compare_registers(int expected[], const char* testName) {
     int allGood = 1;
@@ -58,10 +58,10 @@ void run_binary(char* path) {
     unload_program(p);
 }
 
-void task1(void) {
+void task1(int* total, int* passed) {
     printf("=== Starting Task 1 Tests ===\n");
-    int totalTests = 0;
-    int successTests = 0;
+    int totalStart = *total;
+    int passedStart = *passed;
     int expected[32];
 
     memset(expected, 0, 32 * sizeof(int));
@@ -70,8 +70,8 @@ void task1(void) {
     expected[11] = 0x7ffffffe;
     expected[12] = 0xffffffff;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "addlarge");
+    (*total)++;
+    (*passed) += compare_registers(expected, "addlarge");
     
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task1/addneg.bin");
@@ -79,8 +79,8 @@ void task1(void) {
     expected[11] = 0xffffffc0;
     expected[12] = 0xffffffa0;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "addneg");
+    (*total)++;
+    (*passed) += compare_registers(expected, "addneg");
     
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task1/addpos.bin");
@@ -88,8 +88,8 @@ void task1(void) {
     expected[11] = 0x6;
     expected[12] = 0xb;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "addpos");
+    (*total)++;
+    (*passed) += compare_registers(expected, "addpos");
     
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task1/bool.bin");
@@ -102,8 +102,8 @@ void task1(void) {
     expected[15] = 0x12345779;
     expected[16] = 0x420;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "bool");
+    (*total)++;
+    (*passed) += compare_registers(expected, "bool");
     
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task1/set.bin");
@@ -115,8 +115,8 @@ void task1(void) {
     expected[14] = 0x1;
     expected[16] = 0x1;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "set");
+    (*total)++;
+    (*passed) += compare_registers(expected, "set");
     
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task1/shift.bin");
@@ -124,8 +124,8 @@ void task1(void) {
     expected[11] = 0x0000ffff;
     expected[12] = 0xffffffff;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "shift");
+    (*total)++;
+    (*passed) += compare_registers(expected, "shift");
     
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task1/shift2.bin");
@@ -138,16 +138,16 @@ void task1(void) {
     expected[15] = 0x1579bdf5;
     expected[16] = 0xf579bdf5;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "shift2");
+    (*total)++;
+    (*passed) += compare_registers(expected, "shift2");
 
-    printf("[Passed %d/%d Tests]\n", successTests, totalTests);
+    printf("[Passed %d/%d Tests]\n", (*passed - passedStart), (*total - totalStart));
 }
 
-void task2(void) {
+void task2(int* total, int* passed) {
     printf("=== Starting Task 2 Tests ===\n");
-    int totalTests = 0;
-    int successTests = 0;
+    int totalStart = *total;
+    int passedStart = *passed;
     int expected[32];
 
     memset(expected, 0, 32 * sizeof(int));
@@ -156,8 +156,8 @@ void task2(void) {
     expected[11] = 0xa;
     expected[12] = 0xa;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "branchcnt");
+    (*total)++;
+    (*passed) += compare_registers(expected, "branchcnt");
 
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task2/branchmany.bin");
@@ -165,8 +165,8 @@ void task2(void) {
     expected[11] = 0x4;
     expected[12] = 0x3;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "branchmany");
+    (*total)++;
+    (*passed) += compare_registers(expected, "branchmany");
 
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task2/branchtrap.bin");
@@ -179,16 +179,16 @@ void task2(void) {
     expected[14] = 0x4;
     expected[15] = 0x5;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "branchtrap");
+    (*total)++;
+    (*passed) += compare_registers(expected, "branchtrap");
 
-    printf("[Passed %d/%d Tests]\n", successTests, totalTests);
+    printf("[Passed %d/%d Tests]\n", (*passed - passedStart), (*total - totalStart));
 }
 
-void task3(void) {
+void task3(int* total, int* passed) {
     printf("=== Starting Task 3 Tests ===\n");
-    int totalTests = 0;
-    int successTests = 0;
+    int totalStart = *total;
+    int passedStart = *passed;
     int expected[32];
 
     memset(expected, 0, 32 * sizeof(int));
@@ -203,8 +203,8 @@ void task3(void) {
     expected[15] = 0x1356;
     expected[16] = 0x64;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "loop");
+    (*total)++;
+    (*passed) += compare_registers(expected, "loop");
 
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task3/recursive.bin");
@@ -213,8 +213,8 @@ void task3(void) {
     expected[10] = 0x65;
     expected[15] = 0x65;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "recursive");
+    (*total)++;
+    (*passed) += compare_registers(expected, "recursive");
 
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task3/string.bin");
@@ -248,8 +248,8 @@ void task3(void) {
     expected[28] = 0x6f;
     expected[29] = 0x72;
     expected[30] = 0x3f;
-    totalTests++;
-    successTests += compare_registers(expected, "string");
+    (*total)++;
+    (*passed) += compare_registers(expected, "string");
 
     memset(expected, 0, 32 * sizeof(int));
     run_binary("tests/task3/width.bin");
@@ -262,16 +262,16 @@ void task3(void) {
     expected[15] = 0xefab;
     expected[16] = 0xabefabab;
     expected[17] = 0xa;
-    totalTests++;
-    successTests += compare_registers(expected, "width");
+    (*total)++;
+    (*passed) += compare_registers(expected, "width");
 
-    printf("[Passed %d/%d Tests]\n", successTests, totalTests);
+    printf("[Passed %d/%d Tests]\n", (*passed - passedStart), (*total - totalStart));
 }
 
-void custom(void) {
-    printf("=== Starting Task 3 Tests ===\n");
-    int totalTests = 0;
-    int successTests = 0;
+void custom(int* total, int* passed) {
+    printf("=== Starting Custom Tests ===\n");
+    int totalStart = *total;
+    int passedStart = *passed;
     int expected[32];
 
     memset(expected, 0, 32 * sizeof(int));
@@ -283,16 +283,22 @@ void custom(void) {
     expected[17] = 0xa;
     expected[28] = 0x3;
     expected[29] = 0x4;
-    totalTests++;
-    successTests += compare_registers(expected, "endianness");
+    (*total)++;
+    (*passed) += compare_registers(expected, "endianness");
 
-    printf("[Passed %d/%d Tests]\n", successTests, totalTests);
+
+    printf("[Passed %d/%d Tests]\n", (*passed - passedStart), (*total - totalStart));
 }
 
 int main(void) {
-    task1();
-    task2();
-    task3();
-    custom();
+    int totalTests = 0;
+    int passedTests = 0;
+    task1(&totalTests, &passedTests);
+    task2(&totalTests, &passedTests);
+    task3(&totalTests, &passedTests);
+    custom(&totalTests, &passedTests);
     printf("=== Done with all tests ===\n");
+    printf("Ran    %d tests in total\n", totalTests);
+    printf("Passed %d tests in total\n", passedTests);
+    printf("Passed %.02f%% of all tests\n", ((float)passedTests / totalTests) * 100);
 }
