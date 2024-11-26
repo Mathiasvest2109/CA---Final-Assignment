@@ -275,7 +275,7 @@ void custom(int* total, int* passed) {
     int expected[32];
 
     memset(expected, 0, 32 * sizeof(int));
-    run_binary("tests/custom/endianness.bin");
+    run_binary("tests/custom/endianness1.bin");
     expected[2] = 0x3;
     expected[5] = 0x01020304;
     expected[6] = 0x1;
@@ -284,7 +284,19 @@ void custom(int* total, int* passed) {
     expected[28] = 0x3;
     expected[29] = 0x4;
     (*total)++;
-    (*passed) += compare_registers(expected, "endianness");
+    (*passed) += compare_registers(expected, "endianness1");
+
+    memset(expected, 0, 32 * sizeof(int));
+    run_binary("tests/custom/endianness2.bin");
+    expected[2] = 0x3;
+    expected[5] = 0x01020304;
+    expected[6] = 0x1;
+    expected[7] = 0x2;
+    expected[17] = 0xa;
+    expected[28] = 0x3;
+    expected[29] = 0x4;
+    (*total)++;
+    (*passed) += compare_registers(expected, "endianness2");
 
 
     printf("[Passed %d/%d Tests]\n", (*passed - passedStart), (*total - totalStart));
