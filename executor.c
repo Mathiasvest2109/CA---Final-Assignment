@@ -26,61 +26,57 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
         case I: {
             InstructionI* instr = (InstructionI*)instructionData->data;
 
+            int result;
             switch (instr->opcode) {
                 case JALR:
-                    set_register(instr->rd, program->pc);              // save return address in rd, SKAL DEN VOKSE MED 4 ELLER IKKE?
+                    // save return address in rd, SKAL DEN VOKSE MED 4 ELLER IKKE?
+                    result = program->pc;
                     program->pc = (get_register(instr->rs1) + instr->immediate) & ~1; // go to target address, and ensure even number
                     break;
                 case LW:
-                    // Waiting for Task 3 to be implemented
-                    int word = load_word(get_register(instr->rs1) + instr->immediate);
-                    set_register(instr->rd, word);
+                    result = load_word(get_register(instr->rs1) + instr->immediate);
                     break;
                 case LH:
-
-                    int half_word = load_half(get_register(instr->rs1) + instr->immediate);
-                    set_register(instr->rd, half_word);
+                    result = load_half(get_register(instr->rs1) + instr->immediate);
                     break;
                 case LHU:
-
-                    int unsigned_half_word = load_half(get_register(instr->rs1) + instr->immediate);//unsigned
-                    set_register(instr->rd, unsigned_half_word & 0xffff); 
+                    result = load_half(get_register(instr->rs1) + instr->immediate);
+                    result &= 0xffff; // cut off the sign-extended part
                     break;
                 case LB:
-
-                    int byte = load_byte(get_register(instr->rs1) + instr->immediate);
-                    set_register(instr->rd, byte);
+                    result = load_byte(get_register(instr->rs1) + instr->immediate);
                     break;
                 case LBU:
-
-                    int unsigned_byte = load_byte(get_register(instr->rs1) + instr->immediate);
-                    set_register(instr->rd, unsigned_byte & 0xff);
+                    result = load_byte(get_register(instr->rs1) + instr->immediate);
+                    result &= 0xff; // cut off the sign-extended part
                     break;
-                default:
-                    int result = alu(get_register(instr->rs1), instr->immediate, instr->opcode);
-                    set_register(instr->rd, result);
+                default: // it's an ALU instruction, with an immediate argument instead of a register
+                    result = alu(get_register(instr->rs1), instr->immediate, instr->opcode);
                     break;
             }
+            set_register(instr->rd, result);
             break;
         }
 
         case S: {
             InstructionS* instr = (InstructionS*)instructionData->data;
+            int address = get_register(instr->rs1) + instr->immediate;
+            int toSave = get_register(instr->rs2);
 
             // S-type instructions 
             switch (instr->opcode) {
-                case SW: {
-                    store_word(get_register(instr->rs1) + instr->immediate, get_register(instr->rs2));
+                case SW:
+                    // all 32 bits
+                    store_word(address, toSave);
                     break;
-                }
                 case SH:
-                    store_half(get_register(instr->rs1) + instr->immediate, get_register(instr->rs2) & 0xffff); //bit masking to get 16 bits
+                    // only the lower 16 bits
+                    store_half(address, toSave & 0xffff);
                     break;
-
                 case SB:
-                    store_byte(get_register(instr->rs1) + instr->immediate, get_register(instr->rs2) & 0xff); //bit masking to get 8 bits
+                    // only the lower 8 bits
+                    store_byte(address, toSave & 0xff);
                     break;
-
                 default:
                     //idk girl
                     break;
@@ -90,27 +86,29 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
 
         case B: {
             InstructionB* instr = (InstructionB*)instructionData->data;
+            int arg1 = get_register(instr->rs1);
+            int arg2 = get_register(instr->rs2);
 
             bool shouldBranch;
             // B-type instructions
             switch (instr->opcode) {
                 case BEQ:
-                    shouldBranch = (get_register(instr->rs1) == get_register(instr->rs2));
+                    shouldBranch = (arg1 == arg2);
                     break;
                 case BNE:
-                    shouldBranch = (get_register(instr->rs1) != get_register(instr->rs2));
+                    shouldBranch = (arg1 != arg2);
                     break;
                 case BLT:
-                    shouldBranch = (get_register(instr->rs1) < get_register(instr->rs2));
+                    shouldBranch = (arg1 < arg2);
                     break;
                 case BGE:
-                    shouldBranch = (get_register(instr->rs1) >= get_register(instr->rs2));
+                    shouldBranch = (arg1 >= arg2);
                     break;
                 case BLTU:
-                    shouldBranch = ((unsigned int)get_register(instr->rs1) < (unsigned int)get_register(instr->rs2));
+                    shouldBranch = ((unsigned int)arg1 < (unsigned int)arg2);
                     break;
                 case BGEU:
-                    shouldBranch = ((unsigned int)get_register(instr->rs1) >= (unsigned int)get_register(instr->rs2));
+                    shouldBranch = ((unsigned int)arg1 >= (unsigned int)arg2);
                     break;
                 default:
                     shouldBranch = false;
@@ -150,7 +148,7 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
         case J: {
             InstructionJ* instr = (InstructionJ*)instructionData->data;
 
-            // J-type instruction (e.g., JAL)
+            // J-type instruction (e.g. JAL)
             switch (instr->opcode) {
                 case JAL: {
                     // rd = pc + 4
@@ -167,58 +165,46 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
         }
 
         case Unknown:
-
-            int arg = get_register(10);
-            switch (get_register(17))
+            int arg = get_register(10); // a0
+            switch (get_register(17))   // a7
             {
-            case 1:
-                printf("%d\n",arg);
-                break;
-            
-            case 2:
-                printf("%f\n", (float)arg);
-                break;
+                case 1: // print int
+                    printf("%d\n", arg);
+                    break;
+                case 2: // print float
+                    printf("%f\n", (float)arg);
+                    break;
+                case 4: // print string
+                    printf("%s\n", (char*)get_c_address(arg));
+                    break;
+                case 93: // exit with status code
+                    program->statusCode = get_register(10);
+                    // fallthrough
+                case 10: // exit
+                    program->isHalting = true;
+                    break;
+                case 11: // print char
+                    printf("%c\n", (char)(arg & 0xff));
+                    break;
+                case 34: // print hex
+                    printf("%x\n", arg);
+                    break;
+                case 35: // print binary
+                    unsigned int mask = 1 << (sizeof(int) * CHAR_BIT - 1); // Start with the leftmost bit
 
-            case 4:
-                printf("Address: %p\n", get_c_address(arg));
-                printf("%s\n", (char*)get_c_address(arg));
-                break;
+                    while (mask) {
+                        printf("%d", (arg & mask) ? 1 : 0); // Check if the corresponding bit is set
+                        mask >>= 1; // Shift mask to the right
+                    }
 
-            case 10:
-                program->pc = -1;
-                break;
-
-            case 11:
-                printf("%c\n",arg);
-                break;
-
-            case 34:
-                printf("%x\n",arg);
-                break;
-
-            case 35:
-                unsigned int mask = 1 << (sizeof(int) * CHAR_BIT - 1); // Start with the leftmost bit
-
-                while (mask) {
-                    printf("%d", (arg & mask) ? 1 : 0); // Check if the corresponding bit is set
-                    mask >>= 1; // Shift mask to the right
-                }
-
-                printf("\n");
-                break;
-
-            case 36:
-                printf("%u",arg);
-                break;
-
-            case 93: //missing logic
-                program->pc = -1;
-                break;
-
-            default:
-                break;
+                    printf("\n");
+                    break;
+                case 36: // print unsigned
+                    printf("%u\n",arg);
+                    break;
+                default:
+                    break;
             }
-
         default:
             break;
     }

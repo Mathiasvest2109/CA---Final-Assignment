@@ -7,6 +7,8 @@
 typedef struct Program {
     int pc;
     int size;
+    bool isHalting;
+    int statusCode;
 } Program;
 
 Program* load_program(char* path);

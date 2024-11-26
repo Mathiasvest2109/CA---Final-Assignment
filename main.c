@@ -17,13 +17,14 @@ int main(int argc, char** args)
 
    Program* p = load_program(args[1]);
 
-   while (has_instruction(p)) {
+   while (!p->isHalting) {
       InstructionData instructionData = decode(fetch_instruction(p));
       execute_instruction(&instructionData, p);
    }
 
    dump_registers();
+   int statusCode = p->statusCode;
    unload_program(p);
 
-   return 0;
+   return statusCode;
 }

@@ -9,24 +9,29 @@ Program* load_program(char* path) {
     // TODO error handling?
     FILE* file = fopen(path, "rb");
 
-    for (int i = 0; ; i += 4) {
+    // Read the program into memory
+    int address = 0;
+    while (1) {
         int n;
         int bytesRead = fread(&n, 4, 1, file);
-        
+
         if (bytesRead == 0) {
             break;
         }
-        store_word(i, n);
+        store_word(address, n);
+        address += 4;
     }
 
     program->pc = 0;
     program->size = ftell(file);
+    program->isHalting = false;
+    program->statusCode = 0;
 
     return program;
 }
 
 bool has_instruction(Program* program) {
-    return program->pc < program->size && program->pc != -1;
+    return program->pc < program->size;
 }
 
 int fetch_instruction(Program* program) {
