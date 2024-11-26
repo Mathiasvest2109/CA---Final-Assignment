@@ -172,7 +172,8 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
                     printf("%d\n", arg);
                     break;
                 case 2: // print float
-                    printf("%f\n", (float)arg);
+                    // using a trick to convert the int to a float, without changing the bits
+                    printf("%f\n", *((float*)(&arg)));
                     break;
                 case 4: // print string
                     printf("%s\n", (char*)get_c_address(arg));
@@ -187,11 +188,12 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
                     printf("%c\n", (char)(arg & 0xff));
                     break;
                 case 34: // print hex
-                    printf("%x\n", arg);
+                    printf("0x%04x\n", arg);
                     break;
                 case 35: // print binary
                     unsigned int mask = 1 << (sizeof(int) * CHAR_BIT - 1); // Start with the leftmost bit
 
+                    printf("0b");
                     while (mask) {
                         printf("%d", (arg & mask) ? 1 : 0); // Check if the corresponding bit is set
                         mask >>= 1; // Shift mask to the right
