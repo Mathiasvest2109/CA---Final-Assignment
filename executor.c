@@ -164,7 +164,7 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
             break;
         }
 
-        case Unknown:
+        case Environment:
             int arg = get_register(10); // a0
             switch (get_register(17))   // a7
             {
@@ -207,6 +207,8 @@ void execute_instruction(InstructionData* instructionData, Program* program) {
                 default:
                     break;
             }
+            break;
+        
         default:
             break;
     }

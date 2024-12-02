@@ -19,6 +19,11 @@ int main(int argc, char** args)
 
    while (!p->isHalting) {
       InstructionData instructionData = decode(fetch_instruction(p));
+
+      if (instructionData.type == Unknown) {
+         // Unknown instruction, stopping execution
+         break;
+      }
       execute_instruction(&instructionData, p);
    }
 
