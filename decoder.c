@@ -45,12 +45,11 @@ InstructionData decode(int instructionValue) {
             decoded.type = J;
             break;
         case 0b1110011: // ecall and ebreak
-            decoded.type = Unknown;
+            decoded.type = Environment;
 
             int funct12 = (0xFFF << 20) & instructionValue;
-            InstructionUnknown* environmentInstruction = malloc(sizeof(InstructionUnknown));
+            InstructionEnvironment* environmentInstruction = malloc(sizeof(InstructionEnvironment));
             environmentInstruction->opcode = (funct12 == 0) ? ECALL : EBREAK;
-            environmentInstruction->instruction = instructionValue;
 
             decoded.data = environmentInstruction;
             return decoded;
@@ -202,8 +201,6 @@ InstructionData decode(int instructionValue) {
                         break;
                 }
             }
-            // Set the "opcode" as well
-
             instruction->immediate = GET_S_IMMEDIATE(instructionValue);
 
             decoded.data = instruction;
