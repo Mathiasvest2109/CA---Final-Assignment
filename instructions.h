@@ -47,6 +47,7 @@ typedef enum Opcode {
 
 typedef enum InstructionType {
     Unknown,
+    Environment,
     R,
     I,
     S,
@@ -95,8 +96,11 @@ typedef struct InstructionU {
 // It has all the same data
 typedef InstructionU InstructionJ;
 
-typedef struct InstructionUnknown {
+typedef struct InstructionEnvironment {
     Opcode opcode;
+} InstructionEnvironment;
+
+typedef struct InstructionUnknown {
     int instruction;
 } InstructionUnknown;
 

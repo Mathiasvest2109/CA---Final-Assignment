@@ -10,7 +10,7 @@ int get_register(int index) {
 }
 
 void set_register(int index, int value) {
-    if (index == 0) return;
+    if (index == 0) return; // Do nothing
 
     registers[index - 1] = value;
 }
